@@ -1,4 +1,3 @@
-package com.masoud.gnaydn.app;
 /*
  * Copyright (C) 2014 The Android Open Source Project
  *
@@ -14,20 +13,14 @@ package com.masoud.gnaydn.app;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+package com.masoud.gnaydn.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -35,14 +28,22 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
 
+        if (savedInstanceState == null) {
+            // Create the detail fragment and add it to the activity
+            // using a fragment transaction.
+
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailFragment.DETAIL_URI, getIntent().getData());
+
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(arguments);
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.weather_detail_container, fragment)
+                    .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -57,34 +58,10 @@ public class DetailActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            Intent intent=getActivity().getIntent();
-            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            if(intent!=null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                String forecastItem = intent.getStringExtra(Intent.EXTRA_TEXT);
-                TextView textView = (TextView) rootView.findViewById(R.id.forecast_textview);
-                textView.setText(forecastItem);
-            }
-            return rootView;
-        }
     }
 }
